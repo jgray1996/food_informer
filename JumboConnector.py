@@ -1,5 +1,6 @@
 from supermarktconnector import jumbo
 import json
+import logging
 
 """
 About: 
@@ -38,20 +39,51 @@ License:
 
 class JumboConnector:
 
+
     jumbo_api_version = "v17"
     connector = jumbo.JumboConnector()
+    current_product_id = {}
+    current_product_list = {}
+
 
     def __init__(self):
-        self.connector.jumbo_api_version = self.jumbo_api_version ## package is out of date
-        return
-    
+        self.connector.jumbo_api_version = self.jumbo_api_version # package is out of date, setting version manually
+
     def __str__(self):
         return f"Show me the money version: {self.jumbo_api_version}"
-    
-    def getDasfood(self, food):
-        return self.connector.search_products(food)
-    
+
+    def getDasFood(self, food):
+        """Returns all food matching search term
+        params:
+            food: Search term [string]
+        output
+            API response containing search term [dict]"""
+        for product in self.connector.search_products(food)["products"]["data"]:
+            self.current_product_list[product["id"]] = {"title": product["title"],
+                                                        "price": product["prices"]["price"]["amount"],
+                                                        "unitPrice": product["prices"]["unitPrice"]["price"]["amount"]}
+        return self.current_product_list
+
+    def getDasKiloPrice(self, id):
+        """Returns the kg/price in euros
+        params:
+            id : product ID [string]
+        output:
+            euro/kg [float]"""
+        return self.current_product_list[id]["unitPrice"]
+
+    def getDasDetails(self, id):
+        """Returns complete description of product matching id
+        params:
+            id : product ID [string]
+        output:
+            API response containing product information [dict]"""
+        return self.connector.get_product_details(id)
+
 
 if __name__ == "__main__":
-    j = JumboConnector()
-    print(j.getDasfood("brood"))
+    jumbo = JumboConnector()
+    jumbo.getDasfood("rijst")
+    jumbo.getDasdetails('409922DS')
+
+
