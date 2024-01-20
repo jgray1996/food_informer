@@ -8,6 +8,9 @@ class ShoppingCart:
     def add_product(self, product):
         self.products.append(product)
 
+    def __repr__(self):
+        return f"Cart containing:{self.products}"
+
 
 if __name__ == "__main__":
-    print(f"ShoppingCart class {ShoppingCart}")
+    print(ShoppingCart)

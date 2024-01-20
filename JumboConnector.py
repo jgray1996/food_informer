@@ -1,10 +1,11 @@
 from supermarktconnector import jumbo
+from operator import itemgetter
 import json
 import logging
 
 """
-About: 
-    This class handles the connection to the supermarket 
+About:
+    This class handles the connection to the supermarket
     through the supermarketconnector framework built around the
     jumbomobile API.
 Usage:
@@ -43,26 +44,35 @@ class JumboConnector:
     jumbo_api_version = "v17"
     connector = jumbo.JumboConnector()
     current_product_id = {}
-    current_product_list = {}
+    current_products = {}
+    incompatible_products = []
 
 
     def __init__(self):
-        self.connector.jumbo_api_version = self.jumbo_api_version # package is out of date, setting version manually
+        # package is out of date, setting version manually
+        self.connector.jumbo_api_version = self.jumbo_api_version
+
 
     def __str__(self):
         return f"Show me the money version: {self.jumbo_api_version}"
 
-    def getDasFood(self, food):
+
+    def search_food(self, food):
         """Returns all food matching search term
         params:
             food: Search term [string]
         output
             API response containing search term [dict]"""
         for product in self.connector.search_products(food)["products"]["data"]:
-            self.current_product_list[product["id"]] = {"title": product["title"],
+            if product["productType"] == "Product":
+                self.current_products[product["id"]] = {"title": product["title"],
                                                         "price": product["prices"]["price"]["amount"],
-                                                        "unitPrice": product["prices"]["unitPrice"]["price"]["amount"]}
-        return self.current_product_list
+                                                        "unitPrice": product["prices"]["unitPrice"]["price"]["amount"],
+                                                        "unit": product["prices"]["unitPrice"]["unit"]}
+            else:
+                self.incompatible_products.append(product["id"])
+        return self.current_products
+
 
     def getDasKiloPrice(self, id):
         """Returns the kg/price in euros
@@ -70,20 +80,46 @@ class JumboConnector:
             id : product ID [string]
         output:
             euro/kg [float]"""
-        return self.current_product_list[id]["unitPrice"]
+        return self.current_products[id]["unitPrice"]
 
-    def getDasDetails(self, id):
+
+    def get_nutrition(self, id):
+        try:
+            return self.connector.get_product_details(id)\
+                                    ['product']['data']\
+                                    ['nutritionalInformation'][0]\
+                                    ['nutritionalData']['entries']
+        except IndexError:
+            return None
+
+
+    def get_products(self):
+        for key in self.current_products.keys():
+            title = self.current_products[key]['title']
+            price = self.current_products[key]['price']
+            unitprice = self.current_products[key]['unitPrice']
+            unit = self.current_products[key]['unit']
+            print(unitprice/100, f"€/{unit}", "---", title)
+
+
+    def get_product_details(self):
         """Returns complete description of product matching id
         params:
             id : product ID [string]
         output:
             API response containing product information [dict]"""
-        return self.connector.get_product_details(id)
+
+        for id in self.current_products.keys():
+            if not id in self.incompatible_products:
+                try:
+                    print(self.current_products[id]['title'])
+                    for nutrition in self.get_nutrition(id):
+                        print(nutrition['name'], nutrition['valuePer100g'])
+                except:
+                    pass
 
 
 if __name__ == "__main__":
-    jumbo = JumboConnector()
-    jumbo.getDasfood("rijst")
-    jumbo.getDasdetails('409922DS')
-
-
+    j = JumboConnector()
+    j.search_food("biefstuk")
+    print(j.get_products())

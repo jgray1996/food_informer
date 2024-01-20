@@ -1,13 +1,15 @@
 from dataclasses import dataclass
 
-@dataclass(frozen=True, kw_only=True)
+@dataclass(kw_only=True)
 class Product:
     name : str
-    id : str
-    img_link : str
     stock_price : int
-    unit_price : float
+    unit_price : int
+    unit : str
+
+    def __lt__(self, other):
+        return self.unit_price < other.unit_price
 
 
 if __name__ == "__main__":
-    print(f"Product class {Product}")
+    print(Product)
