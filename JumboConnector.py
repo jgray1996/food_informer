@@ -1,45 +1,19 @@
+"""
+JumboConnector Module
+
+This module defines the JumboConnector class for interacting with the Jumbo API to retrieve food information.
+It includes methods for searching food, retrieving product details, and displaying information about products.
+"""
 from supermarktconnector import jumbo
-from operator import itemgetter
-import json
-import logging
 
-"""
-About:
-    This class handles the connection to the supermarket
-    through the supermarketconnector framework built around the
-    jumbomobile API.
-Usage:
-    JumboConnector.py
-Author:
-    James Gray
-Version:
-    v0.1
-License:
-    MIT License
+# Author and version information
+__author__ = "J. Gray"
+__version__ = "1.0"
 
-    Copyright (c) 2017 David Whipp
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
-"""
+# This code is licensed under the MIT License.
+# See the LICENSE file for details.
 
 class JumboConnector:
-
 
     jumbo_api_version = "v17"
     connector = jumbo.JumboConnector()
@@ -47,15 +21,18 @@ class JumboConnector:
     current_products = {}
     incompatible_products = []
 
-
     def __init__(self):
+        """
+        Initialize JumboConnector with the specified API version.
+        """
         # package is out of date, setting version manually
         self.connector.jumbo_api_version = self.jumbo_api_version
 
-
     def __str__(self):
+        """
+        Return a string representation of the JumboConnector.
+        """
         return f"Show me the money version: {self.jumbo_api_version}"
-
 
     def search_food(self, food):
         """Returns all food matching search term
@@ -65,25 +42,26 @@ class JumboConnector:
             API response containing search term [dict]"""
         for product in self.connector.search_products(food)["products"]["data"]:
             if product["productType"] == "Product":
-                self.current_products[product["id"]] = {"title": product["title"],
-                                                        "price": product["prices"]["price"]["amount"],
-                                                        "unitPrice": product["prices"]["unitPrice"]["price"]["amount"],
-                                                        "unit": product["prices"]["unitPrice"]["unit"]}
+                self.current_products[product["id"]] = {
+                    "title": product["title"],
+                    "price": product["prices"]["price"]["amount"],
+                    "unitPrice": product["prices"]["unitPrice"]["price"]["amount"],
+                    "unit": product["prices"]["unitPrice"]["unit"]
+                }
             else:
                 self.incompatible_products.append(product["id"])
         return self.current_products
 
-
-    def getDasKiloPrice(self, id):
-        """Returns the kg/price in euros
-        params:
-            id : product ID [string]
-        output:
-            euro/kg [float]"""
-        return self.current_products[id]["unitPrice"]
-
-
     def get_nutrition(self, id):
+        """
+        Returns nutritional information for a product.
+
+        Args:
+            id (str): Product ID.
+
+        Returns:
+            list: Nutritional information entries.
+        """
         try:
             return self.connector.get_product_details(id)\
                                     ['product']['data']\
@@ -92,15 +70,16 @@ class JumboConnector:
         except IndexError:
             return None
 
-
     def get_products(self):
+        """
+        Print information about current products
+        """
         for key in self.current_products.keys():
             title = self.current_products[key]['title']
             price = self.current_products[key]['price']
             unitprice = self.current_products[key]['unitPrice']
             unit = self.current_products[key]['unit']
             print(unitprice/100, f"€/{unit}", "---", title)
-
 
     def get_product_details(self):
         """Returns complete description of product matching id
@@ -118,8 +97,5 @@ class JumboConnector:
                 except:
                     pass
 
-
 if __name__ == "__main__":
-    j = JumboConnector()
-    j.search_food("biefstuk")
-    print(j.get_products())
+    print(JumboConnector)
