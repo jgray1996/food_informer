@@ -76,4 +76,4 @@ class FoodInformer:
 
 if __name__ == "__main__":
     informer = FoodInformer()
-    print(informer.search_food("zalm"))
+    print(informer.search_food("vlees").sort_values(by="unit_price"))
