@@ -21,3 +21,6 @@ This Project requires the following dependences to be installed using the follow
 2) Open a terminal in the cloned director
 3) run `jupyter-notebook .`
 4) run the cells
+
+## LICENCE
+This project is licenced under the MIT-licence
