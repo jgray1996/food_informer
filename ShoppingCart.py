@@ -46,6 +46,5 @@ class ShoppingCart:
         """
         return f"Cart containing: {self.products}"
 
-
-if __name__ == "__main__":
-    print(ShoppingCart)
+    def empty(self):
+        self.products = []

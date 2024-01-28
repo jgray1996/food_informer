@@ -24,10 +24,6 @@ __version__ = "1.0.0"
 class FoodInformer:
     """A class for searching and retrieving food information using JumboConnector."""
 
-    def __init__(self):
-        self.jumbo = JumboConnector()
-        self.cart = ShoppingCart()
-
     def search_food(self, product_name):
         """
         Search for a product using JumboConnector and add it to the shopping cart.
@@ -38,28 +34,31 @@ class FoodInformer:
         Returns:
         - pd.DataFrame: A DataFrame containing information about the added products.
         """
-        self.jumbo.search_food(product_name)
+        c1 = ShoppingCart()
+        j1 = JumboConnector()
+        j1.current_products = {}
+        j1.search_food(product_name)
 
-        for product_id in self.jumbo.current_products:
-            product_info = self.jumbo.current_products[product_id]
-            self.cart.add_product(
+        for product_id in j1.current_products:
+            product_info = j1.current_products[product_id]
+            c1.add_product(
                 Product(name=product_info['title'],
                         stock_price=product_info['price'],
                         unit_price=product_info['unitPrice'],
                         unit=product_info['unit']))
+        products = self.get_products(c1)
+        return self.get_dataframe(products)
 
-        return self.get_dataframe()
-
-    def get_products(self):
+    def get_products(self, products):
         """
         Get all products in the shopping cart.
 
         Returns:
         - list: A list of Product objects in the shopping cart.
         """
-        return self.cart.get_all_products()
+        return products.get_all_products()
 
-    def get_dataframe(self):
+    def get_dataframe(self, products):
         """
         Convert the products in the shopping cart to a Pandas DataFrame.
 
@@ -69,11 +68,13 @@ class FoodInformer:
         columns = ["product", "stock_price", "unit_price", "unit"]
         df = pd.DataFrame(columns=columns)
 
-        for i, product in enumerate(self.get_products()):
+        for i, product in enumerate(products):
             df.loc[i] = [product.name, product.stock_price, product.unit_price, product.unit]
 
         return df
 
 if __name__ == "__main__":
     informer = FoodInformer()
-    print(informer.search_food("vlees").sort_values(by="unit_price"))
+    print(informer.search_food("Biet rode").sort_values(by="unit_price"))
+    print(informer.search_food("Kool boeren").sort_values(by="unit_price"))
+    print(informer.search_food("doperweten").sort_values(by="unit_price"))
