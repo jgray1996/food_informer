@@ -1,4 +1,4 @@
-# food_informer
+T# food_informer
 Allowing Dutch users to make unbiased cheap and healthy decisions.
 
 ## Introduction
@@ -9,7 +9,7 @@ to make informed discicions about what to buy.
 ## Aim
 This project aims to provide a crude insight into the nutricion to price relationship per
 foodgroup. This is done by applying frequentist statistics to
-the [NEVO]("https://www.rivm.nl/en/dutch-food-composition-database/use-of-nevo-online/request-dataset") 
+the [NEVO](https://www.rivm.nl/en/dutch-food-composition-database/use-of-nevo-online/request-dataset) 
 and retrieving the most significant products using the hidden jumbo api.
 
 ## Dependencies
