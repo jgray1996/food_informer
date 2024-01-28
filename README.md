@@ -14,7 +14,7 @@ and retrieving the most significant products using the hidden jumbo api.
 
 ## Dependencies
 This Project requires the following dependences to be installed using the followint pip command:
-`pip install bokeh seaborn pandas panel matplotlib scipy jupyter-notebook`
+`pip install bokeh seaborn pandas panel matplotlib supermarktconnector scipy jupyter-notebook`
 
 ## Installation & running the project
 1) Clone repository using `git clone https://github.com/jgray1996/food_informer`
