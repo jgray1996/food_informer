@@ -1,0 +1,6 @@
+## path to data
+data_files:
+  NEVO: "data/NEVO2023_v8.0/NEVO2023_8.0.csv"
+  NEVO_DETAILS: "data/NEVO2023_v8.0/NEVO2023_v8.0_details.csv"
+  NEVO_NUTRIENTS: "data/NEVO2023_v8.0/NEVO2023_v8.0_Nutrienten_Nutrients.csv"
+  JUMBO_DUMP: "data/jumbo_dump.pkl"
